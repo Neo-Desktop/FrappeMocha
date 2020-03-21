@@ -9,21 +9,177 @@ namespace FrappeMocha
 
         public enum LicenseTypes
         {
-            License3270 = 140,
-            License5250 = 128,
-            License3812 = 160,
-            LicenseTelnet = 155,
-            LicenseJava3270 = 30,
-            LicenseJava5250 = 30,
+            License3270 = 0x8c,
+            License5250 = 0x80,
+            License3812 = 0xa0,
+            LicenseTelnet = 0x9b,
+            LicenseJava3270 = 0x1e,
+            LicenseJava5250 = 0x1e,
             LicenseJavaTelnet = 0x1b,
             LicenseMac3270 = 0x5d,
             LicenseMac5250 = 0x16,
+            LicenseMac3812 = 0x22,
+            LicenseMacTelnet = 0x5e,
+            LicenseMacKeyboard = 0xa5,
         }
 
         public Keygen()
         {
             this.param_encoding = 0;
         }
+
+
+        public string GenLicense(int type, string param_company, LicenseTypes license)
+        {
+            switch (license)
+            {
+                case LicenseTypes.License3270:
+                case LicenseTypes.License3812:
+                case LicenseTypes.License5250:
+                case LicenseTypes.LicenseTelnet:
+                    return GenLicenseWindows(type, param_company, license);
+
+                case LicenseTypes.LicenseJavaTelnet:
+                case LicenseTypes.LicenseJava3270:
+                    // case LicenseTypes.LicenseJava5250:
+                    return GenLicenseJava(type, param_company, license);
+
+                case LicenseTypes.LicenseMac3270:
+                case LicenseTypes.LicenseMac5250:
+                    return GenLicenseMacAlpha(type, param_company, license);
+
+                case LicenseTypes.LicenseMac3812:
+                case LicenseTypes.LicenseMacTelnet:
+                case LicenseTypes.LicenseMacKeyboard:
+                    return GenLicenseMacNum(type, param_company, license);
+            }
+            return "";
+        }
+
+        /**
+         * By far the easiest implemntation, everything was already in .NET :P
+         */
+        public string GenLicenseWindows(int type, string param_company, LicenseTypes license)
+        {
+            string param_lickey = type.ToString();
+            uint num1 = 0;
+            byte[] byteArray = this.StrToByteArray(param_company);
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((int)byteArray[index] >= 65 && (int)byteArray[index] <= 90)
+                    byteArray[index] += (byte)32; // this is basically str.toLower()
+            }
+
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((int)byteArray[index] >= 65) // 'A'
+                    num1 += (uint)byteArray[index] + (uint)license;
+            }
+            uint num2 = num1 * (uint)param_lickey[0];
+            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
+            if (num3 < 100U)
+                num3 = 2728U;
+
+            param_lickey = (param_lickey[0].ToString() + (object)num3) + '-' +
+                           (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+
+            return param_lickey;
+        }
+
+        /**
+         * Pretty stright forward implementation as well
+         * .NET is just a copy of Java afterall
+         */
+        public string GenLicenseJava(int itype, string param_company, LicenseTypes license)
+        {
+            char type = (char)(itype + (int)'A');
+            string param_lickey = type.ToString() + '@';
+            byte[] byteArray = this.StrToByteArray(param_company);
+            uint num1 = 0;
+
+            for (int b = 0; b < byteArray.Length; b++)
+            {
+                if (param_company.ToCharArray()[b] > ' ')
+                    num1 += param_company.ToCharArray()[b] + (uint)license;
+            }
+
+            uint num2 = num1 * (uint)param_lickey[0];
+            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
+            param_lickey += (object) num3;
+            return param_lickey;
+        }
+
+        /**
+         * Now the fun stuff..
+         * 
+         * Beware! the Mac versions rely on datatype truncation
+         * It's a real pain in the ass to make sure the datatypes are all accurate
+         */
+        public string GenLicenseMacAlpha(int itype, string param_company, LicenseTypes license)
+        {
+            // must start with an 'a' or 'b;
+            char type = (char)(itype + (int)'a');
+            string param_lickey = type.ToString();
+            byte[] byteArray = this.StrToByteArray(param_company);
+            short num1 = 0;
+
+            for (int b = 0; b < byteArray.Length; b++)
+            {
+                if (param_company.ToCharArray()[b] >= 0x21)
+                    num1 += (short)(param_company.ToCharArray()[b] + license);
+            }
+
+            ushort num2 = (ushort)(num1 * (short)param_lickey[0]);
+            param_lickey += (ushort)((num2 & byte.MaxValue) * num2);
+            return param_lickey;
+        }
+
+        /**
+         * Beware! the Mac versions rely on datatype truncation
+         * It's a real pain in the ass to make sure the datatypes are all accurate
+         * 
+         * There's a special case for the MacKeyboard as it deviates from the rest of the algoritm
+         * The (byte) cast is extmely important
+         */
+        public string GenLicenseMacNum(int itype, string param_company, LicenseTypes license)
+        {
+            char type = (char)(itype + (int)'0');
+            string param_lickey = type.ToString();
+            uint num1 = 0;
+            byte[] byteArray = this.StrToByteArray(param_company);
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if (license == LicenseTypes.LicenseMacKeyboard && (byte)(byteArray[index] + 0xbf) < 0x1a)
+                {
+                    byteArray[index] += 32;
+                }
+                else if (license != LicenseTypes.LicenseMacKeyboard && byteArray[index] + 0xbf < 0x1a)
+                {
+                    byteArray[index] += 32;
+                }
+            }
+
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((int)byteArray[index] >= 0x41) // 'A'
+                    num1 += (uint)byteArray[index] + (uint)license;
+            }
+
+            uint num2 = (uint)(num1 * (int)param_lickey[0]);
+            num2 = (uint)(num2 * (num2 & byte.MaxValue) & ushort.MaxValue);
+            ulong num3 = 0xaa8;
+            if (99 < num2)
+            {
+                num3 = (ulong)num2;
+            }
+
+            param_lickey = param_lickey[0].ToString() + (object) num3;
+
+
+            return param_lickey;
+        }
+
 
         public bool CheckLicense(string param_lickey, string param_company, LicenseTypes license)
         {
@@ -37,21 +193,30 @@ namespace FrappeMocha
 
                 case LicenseTypes.LicenseJavaTelnet:
                 case LicenseTypes.LicenseJava3270:
-                // case LicenseTypes.LicenseJava5250:
+                    // case LicenseTypes.LicenseJava5250:
                     return CheckLicenseJava(param_lickey, param_company, license);
 
                 case LicenseTypes.LicenseMac3270:
                 case LicenseTypes.LicenseMac5250:
+                case LicenseTypes.LicenseMac3812:
+                case LicenseTypes.LicenseMacTelnet:
+                case LicenseTypes.LicenseMacKeyboard:
                     return CheckLicenseMac(param_lickey, param_company, license);
             }
             return false;
         }
 
+        /**
+         * @todo: write some sanity checks
+         */
         public bool CheckLicenseJava(string param_lickey, string param_company, LicenseTypes license)
         {
             return true;
         }
 
+        /**
+         * @todo: write some sanity checks
+         */
         public bool CheckLicenseMac(string param_lickey, string param_company, LicenseTypes license)
         {
             return true;
@@ -88,94 +253,6 @@ namespace FrappeMocha
             }
             //this.aa = "";
             return false;
-        }
-
-        public string GenLicense(int type, string param_company, LicenseTypes license)
-        {
-            switch (license)
-            {
-                case LicenseTypes.License3270:
-                case LicenseTypes.License3812:
-                case LicenseTypes.License5250:
-                case LicenseTypes.LicenseTelnet:
-                    return GenLicenseWindows(type, param_company, license);
-
-                case LicenseTypes.LicenseJavaTelnet:
-                case LicenseTypes.LicenseJava3270:
-                    // case LicenseTypes.LicenseJava5250:
-                    return GenLicenseJava(type, param_company, license);
-
-                case LicenseTypes.LicenseMac3270:
-                case LicenseTypes.LicenseMac5250:
-                    return GenLicenseMac(type, param_company, license);
-            }
-            return "";
-        }
-
-        public string GenLicenseWindows(int type, string param_company, LicenseTypes license)
-        {
-            string param_lickey = type.ToString();
-            uint num1 = 0;
-            byte[] byteArray = this.StrToByteArray(param_company);
-            for (int index = 0; index < byteArray.Length; ++index)
-            {
-                if ((int)byteArray[index] >= 65 && (int)byteArray[index] <= 90)
-                    byteArray[index] += (byte)32; // this is basically str.toLower()
-            }
-
-            for (int index = 0; index < byteArray.Length; ++index)
-            {
-                if ((int)byteArray[index] >= 65) // 'A'
-                    num1 += (uint)byteArray[index] + (uint)license;
-            }
-            uint num2 = num1 * (uint)param_lickey[0];
-            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
-            if (num3 < 100U)
-                num3 = 2728U;
-
-            param_lickey = ((param_lickey[0].ToString() ?? "") + (object)num3) + '-' +
-                           (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
-
-            return param_lickey;
-        }
-
-        public string GenLicenseJava(int itype, string param_company, LicenseTypes license)
-        {
-            char type = (char)(itype + (int)'A');
-            string param_lickey = type.ToString() + '@';
-            byte[] byteArray = this.StrToByteArray(param_company);
-            uint num1 = 0;
-
-            for (int b = 0; b < byteArray.Length; b++)
-            {
-                if (param_company.ToCharArray()[b] > ' ')
-                    num1 += param_company.ToCharArray()[b] + (uint)license;
-            }
-
-            uint num2 = num1 * (uint)param_lickey[0];
-            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
-            param_lickey += (object) num3;
-            return param_lickey;
-        }
-
-        public string GenLicenseMac(int itype, string param_company, LicenseTypes license)
-        {
-            char type = (char)(itype + (int)'a');
-            string param_lickey = type.ToString() + '@';
-            byte[] byteArray = this.StrToByteArray(param_company);
-            uint num1 = 0;
-
-            for (int b = 0; b < byteArray.Length; b++)
-            {
-                if (param_company.ToCharArray()[b] > ' ')
-                    num1 += param_company.ToCharArray()[b] + (uint)license;
-            }
-
-            uint num2 = num1 * (uint)param_lickey[0];
-            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
-            param_lickey += (object)num3;
-            return param_lickey;
         }
 
         public byte[] StrToByteArray(string str)

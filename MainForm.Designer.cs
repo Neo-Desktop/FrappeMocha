@@ -56,7 +56,7 @@
             // companytext
             // 
             this.companytext.Location = new System.Drawing.Point(12, 105);
-            this.companytext.MaxLength = 512;
+            this.companytext.MaxLength = 80;
             this.companytext.Name = "companytext";
             this.companytext.Size = new System.Drawing.Size(146, 20);
             this.companytext.TabIndex = 1;
@@ -96,6 +96,7 @@
             this.licensebox.ReadOnly = true;
             this.licensebox.Size = new System.Drawing.Size(146, 20);
             this.licensebox.TabIndex = 5;
+            this.licensebox.Click += new System.EventHandler(this.licensebox_Click);
             // 
             // submit
             // 
@@ -129,7 +130,10 @@
             "TN5250 for Java",
             "Telnet for Java",
             "TN3270 for Mac OS X",
-            "TN5250 for Mac OS X"});
+            "TN5250 for Mac OS X",
+            "TN3812 for Mac OS X",
+            "Telnet for Mac OS X",
+            "Keyboard for Mac OS X"});
             this.productSelect.Location = new System.Drawing.Point(12, 25);
             this.productSelect.Name = "productSelect";
             this.productSelect.Size = new System.Drawing.Size(146, 21);

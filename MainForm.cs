@@ -12,7 +12,7 @@ namespace FrappeMocha
     {
         protected Keygen frappeKeygen;
         private object[] windowsLicenseTypeItems = new object[2];
-        private object[] macLicenseTypeItems = new object[2];
+        private object[] macLicenseTypeItems = new object[1];
         private object[] javaLicenseTypeItems = new object[5];
 
         public MainForm()
@@ -49,9 +49,9 @@ namespace FrappeMocha
         private void initMacLicenseTypeItems()
         {
             TypeDropDown.Items.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 1; i++)
             {
-                TypeDropDown.Items.Add((char)('a' + i));
+                TypeDropDown.Items.Add((char) ('0' + i));
             }
             TypeDropDown.Items.CopyTo(this.macLicenseTypeItems, 0);
         }
@@ -95,6 +95,18 @@ namespace FrappeMocha
                 case 8:
                     this.keygen(Keygen.LicenseTypes.LicenseMac5250);
                     break;
+
+                case 9:
+                    this.keygen(Keygen.LicenseTypes.LicenseMac3812);
+                    break;
+
+                case 10:
+                    this.keygen(Keygen.LicenseTypes.LicenseMacTelnet);
+                    break;
+
+                case 11:
+                    this.keygen(Keygen.LicenseTypes.LicenseMacKeyboard);
+                    break;
             }
         }
 
@@ -129,6 +141,16 @@ namespace FrappeMocha
                 return;
             }
 
+            if (companytext.Text.Length > 80)
+            {
+                MessageBox.Show(
+                    (TypeDropDown.SelectedIndex == 0
+                        ? "Company Name"
+                        : "User Name") + " must not be greater than eighty characters", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             string genlicense = frappeKeygen.GenLicense(TypeDropDown.SelectedIndex, companytext.Text, license);
             if (!frappeKeygen.CheckLicense(genlicense, companytext.Text, license))
             {
@@ -150,7 +172,9 @@ namespace FrappeMocha
                 case 1:
                 case 2:
                 case 3:
-                    if (this.windowsLicenseTypeItems[0] != null)
+                case 7: // mac type 1
+                case 8: // mac type 1
+                    if (windowsLicenseTypeItems[0] != null)
                     {
                         TypeDropDown.Items.Clear();
                         TypeDropDown.Items.AddRange(this.windowsLicenseTypeItems);
@@ -163,13 +187,19 @@ namespace FrappeMocha
                     TypeDropDown.Items.AddRange(this.javaLicenseTypeItems);
                     break;
 
-                case 7:
-                case 8:
+                case 9: // mac type 2
+                case 10:
+                case 11:
                     TypeDropDown.Items.Clear();
                     TypeDropDown.Items.AddRange(this.macLicenseTypeItems);
                     break;
             }
             TypeDropDown.SelectedIndex = 0;
+        }
+
+        private void licensebox_Click(object sender, EventArgs e)
+        {
+            licensebox.SelectAll();
         }
     }
 }
