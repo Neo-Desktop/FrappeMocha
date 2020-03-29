@@ -238,21 +238,21 @@ namespace FrappeMocha
 
         public string GenLicenseAndroid(int itype, string param_company, LicenseTypes license)
         {
-            char type = (char)(itype + (int)'0');
+            char type = (char) (itype + (int) '0');
             string param_lickey = type.ToString();
             long sum = 0;
             byte[] byteArray = this.StrToByteArray(param_company);
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if ((long)byteArray[index] >= 65 && (long)byteArray[index] <= 90)
+                if ((long) byteArray[index] >= 65 && (long) byteArray[index] <= 90)
                     byteArray[index] += 32; // this is basically str.toLower()
             }
 
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if ((ulong)byteArray[index] >= 65 && (ulong)byteArray[index] <= 122)
+                if ((ulong) byteArray[index] >= 65 && (ulong) byteArray[index] <= 122)
                 {
-                    sum += byteArray[index] + (uint)license;
+                    sum += byteArray[index] + (uint) license;
                 }
             }
             sum = sum * param_lickey[0];
@@ -317,14 +317,14 @@ namespace FrappeMocha
             }
             for (int i = 0; i < param_lickey.Length; i++)
             {
-                bArr2[i] = (byte)param_lickey[i];
+                bArr2[i] = (byte) param_lickey[i];
             }
             for (int i2 = 0; i2 < param_company.Length; i2++)
             {
-                bArr[i2] = (byte)param_company[i2];
+                bArr[i2] = (byte) param_company[i2];
                 if (param_company[i2] >= 'A' && param_company[i2] <= 'Z')
                 {
-                    bArr[i2] = (byte)(bArr[i2] + 32);
+                    bArr[i2] = (byte) (bArr[i2] + 32);
                 }
             }
             long j = 0;
@@ -332,7 +332,7 @@ namespace FrappeMocha
             {
                 if (bArr[i3] >= 65 && bArr[i3] <= 122)
                 {
-                    j += (bArr[i3] + (long)license);
+                    j += (bArr[i3] + (long) license);
                 }
             }
             long j2 = j * bArr2[0];
@@ -343,7 +343,7 @@ namespace FrappeMocha
             }
             string sb = "";
             sb += param_lickey[0];
-            sb += (object)j3;
+            sb += (object) j3;
             if (param_lickey.StartsWith(sb))
             {
                 // lictype = bArr2[0] - 48;

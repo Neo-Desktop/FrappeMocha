@@ -141,7 +141,6 @@ namespace FrappeMocha
                 case 19:
                     this.keygen(Keygen.LicenseTypes.LicenseAndroidBarcode);
                     break;
-
             }
         }
 
@@ -248,11 +247,12 @@ namespace FrappeMocha
 
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            Array.Copy(this.ficus, 1, this.ficus, 0, this.ficus.Length -1);
-            this.ficus[ficus.Length -1] = e.KeyChar;
-            if (new string (ficus) == "spicey")
+            Array.Copy(this.ficus, 1, this.ficus, 0, this.ficus.Length - 1);
+            this.ficus[ficus.Length - 1] = e.KeyChar;
+            if (new string(ficus) == "spicey")
             {
-                switch (MessageBox.Show("Would you like a little salt, as a treat?", "Orly?", MessageBoxButtons.YesNoCancel,
+                switch (MessageBox.Show("Would you like a little salt, as a treat?", "Orly?",
+                    MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Question))
                 {
                     case DialogResult.Yes:
