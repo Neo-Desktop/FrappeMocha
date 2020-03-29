@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ namespace FrappeMocha
     public partial class MainForm : Form
     {
         protected Keygen frappeKeygen;
+        private char[] ficus = new char[6];
         private object[] windowsLicenseTypeItems = new object[2];
         private object[] macLicenseTypeItems = new object[1];
         private object[] javaLicenseTypeItems = new object[5];
@@ -61,19 +63,19 @@ namespace FrappeMocha
             switch (productSelect.SelectedIndex)
             {
                 case 0:
-                    this.keygen(Keygen.LicenseTypes.License3270);
+                    this.keygen(Keygen.LicenseTypes.LicenseWindows3270);
                     break;
 
                 case 1:
-                    this.keygen(Keygen.LicenseTypes.License5250);
+                    this.keygen(Keygen.LicenseTypes.LicenseWindows5250);
                     break;
 
                 case 2:
-                    this.keygen(Keygen.LicenseTypes.License3812);
+                    this.keygen(Keygen.LicenseTypes.LicenseWindows3812);
                     break;
 
                 case 3:
-                    this.keygen(Keygen.LicenseTypes.LicenseTelnet);
+                    this.keygen(Keygen.LicenseTypes.LicenseWindowsTelnet);
                     break;
 
                 case 4:
@@ -107,6 +109,18 @@ namespace FrappeMocha
                 case 11:
                     this.keygen(Keygen.LicenseTypes.LicenseMacKeyboard);
                     break;
+
+                case 12:
+                    this.keygen(Keygen.LicenseTypes.LicenseChrome3270);
+                    break;
+
+                case 13:
+                    this.keygen(Keygen.LicenseTypes.LicenseChrome5250);
+                    break;
+
+                case 14:
+                    this.keygen(Keygen.LicenseTypes.LicenseChromeTelnet);
+                    break;
             }
         }
 
@@ -127,6 +141,8 @@ namespace FrappeMocha
             {
                 companyusernamelabel.Text = "Name";
             }
+
+            AcceptButton.PerformClick();
         }
 
         private void keygen(Keygen.LicenseTypes license)
@@ -174,6 +190,7 @@ namespace FrappeMocha
                 case 3:
                 case 7: // mac type 1
                 case 8: // mac type 1
+                case 12:
                     if (windowsLicenseTypeItems[0] != null)
                     {
                         TypeDropDown.Items.Clear();
@@ -195,11 +212,39 @@ namespace FrappeMocha
                     break;
             }
             TypeDropDown.SelectedIndex = 0;
+            AcceptButton.PerformClick();
         }
 
         private void licensebox_Click(object sender, EventArgs e)
         {
             licensebox.SelectAll();
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            AcceptButton.PerformClick();
+        }
+
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            Array.Copy(this.ficus, 1, this.ficus, 0, this.ficus.Length -1);
+            this.ficus[ficus.Length -1] = e.KeyChar;
+            if (new string (ficus) == "spicey")
+            {
+                switch (MessageBox.Show("Would you like a little salt, as a treat?", "Orly?", MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question))
+                {
+                    case DialogResult.Yes:
+                        Process.Start("https://i.imgur.com/EJ31bmk.jpg");
+                        break;
+                    case DialogResult.No:
+                        Process.Start(
+                            "https://pics.me.me/white-people-cant-handle-spicy-food-um-try-again-sweetie-6626438.png");
+                        break;
+                    case DialogResult.Cancel:
+                        break;
+                }
+            }
         }
     }
 }

@@ -133,7 +133,10 @@
             "TN5250 for Mac OS X",
             "TN3812 for Mac OS X",
             "Telnet for Mac OS X",
-            "Keyboard for Mac OS X"});
+            "Keyboard for Mac OS X",
+            "TN3270 for Google Chrome",
+            "TN5250 for Google Chrome",
+            "Telnet for Google Chrome"});
             this.productSelect.Location = new System.Drawing.Point(12, 25);
             this.productSelect.Name = "productSelect";
             this.productSelect.Size = new System.Drawing.Size(146, 21);
@@ -156,12 +159,15 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.companytext);
             this.Controls.Add(this.TypeDropDown);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "FrappeMocha";
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

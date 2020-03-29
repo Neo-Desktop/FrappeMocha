@@ -9,10 +9,10 @@ namespace FrappeMocha
 
         public enum LicenseTypes
         {
-            License3270 = 0x8c,
-            License5250 = 0x80,
-            License3812 = 0xa0,
-            LicenseTelnet = 0x9b,
+            LicenseWindows3270 = 0x8c,
+            LicenseWindows5250 = 0x80,
+            LicenseWindows3812 = 0xa0,
+            LicenseWindowsTelnet = 0x9b,
             LicenseJava3270 = 0x1e,
             LicenseJava5250 = 0x1e,
             LicenseJavaTelnet = 0x1b,
@@ -21,6 +21,9 @@ namespace FrappeMocha
             LicenseMac3812 = 0x22,
             LicenseMacTelnet = 0x5e,
             LicenseMacKeyboard = 0xa5,
+            LicenseChrome3270 = 0xb3,
+            LicenseChrome5250 = 0xb2,
+            LicenseChromeTelnet = 0xb4,
         }
 
         public Keygen()
@@ -33,10 +36,10 @@ namespace FrappeMocha
         {
             switch (license)
             {
-                case LicenseTypes.License3270:
-                case LicenseTypes.License3812:
-                case LicenseTypes.License5250:
-                case LicenseTypes.LicenseTelnet:
+                case LicenseTypes.LicenseWindows3270:
+                case LicenseTypes.LicenseWindows3812:
+                case LicenseTypes.LicenseWindows5250:
+                case LicenseTypes.LicenseWindowsTelnet:
                     return GenLicenseWindows(type, param_company, license);
 
                 case LicenseTypes.LicenseJavaTelnet:
@@ -52,6 +55,11 @@ namespace FrappeMocha
                 case LicenseTypes.LicenseMacTelnet:
                 case LicenseTypes.LicenseMacKeyboard:
                     return GenLicenseMacNum(type, param_company, license);
+
+                case LicenseTypes.LicenseChrome3270:
+                case LicenseTypes.LicenseChrome5250:
+                case LicenseTypes.LicenseChromeTelnet:
+                    return GenLicenseJavascript(type, param_company, license);
             }
             return "";
         }
@@ -66,22 +74,22 @@ namespace FrappeMocha
             byte[] byteArray = this.StrToByteArray(param_company);
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if ((int)byteArray[index] >= 65 && (int)byteArray[index] <= 90)
-                    byteArray[index] += (byte)32; // this is basically str.toLower()
+                if ((int) byteArray[index] >= 65 && (int) byteArray[index] <= 90)
+                    byteArray[index] += (byte) 32; // this is basically str.toLower()
             }
 
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if ((int)byteArray[index] >= 65) // 'A'
-                    num1 += (uint)byteArray[index] + (uint)license;
+                if ((int) byteArray[index] >= 65) // 'A'
+                    num1 += (uint) byteArray[index] + (uint) license;
             }
-            uint num2 = num1 * (uint)param_lickey[0];
-            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
+            uint num2 = num1 * (uint) param_lickey[0];
+            uint num3 = (uint) ((int) num2 * ((int) num2 & (int) byte.MaxValue) & (int) ushort.MaxValue);
             if (num3 < 100U)
                 num3 = 2728U;
 
-            param_lickey = (param_lickey[0].ToString() + (object)num3) + '-' +
-                           (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            param_lickey = (param_lickey[0].ToString() + (object) num3) + '-' +
+                           (Int32) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
 
             return param_lickey;
@@ -93,7 +101,7 @@ namespace FrappeMocha
          */
         public string GenLicenseJava(int itype, string param_company, LicenseTypes license)
         {
-            char type = (char)(itype + (int)'A');
+            char type = (char) (itype + (int) 'A');
             string param_lickey = type.ToString() + '@';
             byte[] byteArray = this.StrToByteArray(param_company);
             uint num1 = 0;
@@ -101,11 +109,11 @@ namespace FrappeMocha
             for (int b = 0; b < byteArray.Length; b++)
             {
                 if (param_company.ToCharArray()[b] > ' ')
-                    num1 += param_company.ToCharArray()[b] + (uint)license;
+                    num1 += param_company.ToCharArray()[b] + (uint) license;
             }
 
-            uint num2 = num1 * (uint)param_lickey[0];
-            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
+            uint num2 = num1 * (uint) param_lickey[0];
+            uint num3 = (uint) ((int) num2 * ((int) num2 & (int) byte.MaxValue) & (int) ushort.MaxValue);
             param_lickey += (object) num3;
             return param_lickey;
         }
@@ -119,7 +127,7 @@ namespace FrappeMocha
         public string GenLicenseMacAlpha(int itype, string param_company, LicenseTypes license)
         {
             // must start with an 'a' or 'b;
-            char type = (char)(itype + (int)'a');
+            char type = (char) (itype + (int) 'a');
             string param_lickey = type.ToString();
             byte[] byteArray = this.StrToByteArray(param_company);
             short num1 = 0;
@@ -127,11 +135,11 @@ namespace FrappeMocha
             for (int b = 0; b < byteArray.Length; b++)
             {
                 if (param_company.ToCharArray()[b] >= 0x21)
-                    num1 += (short)(param_company.ToCharArray()[b] + license);
+                    num1 += (short) (param_company.ToCharArray()[b] + license);
             }
 
-            ushort num2 = (ushort)(num1 * (short)param_lickey[0]);
-            param_lickey += (ushort)((num2 & byte.MaxValue) * num2);
+            ushort num2 = (ushort) (num1 * (short) param_lickey[0]);
+            param_lickey += (ushort) ((num2 & byte.MaxValue) * num2);
             return param_lickey;
         }
 
@@ -144,13 +152,13 @@ namespace FrappeMocha
          */
         public string GenLicenseMacNum(int itype, string param_company, LicenseTypes license)
         {
-            char type = (char)(itype + (int)'0');
+            char type = (char) (itype + (int) '0');
             string param_lickey = type.ToString();
             uint num1 = 0;
             byte[] byteArray = this.StrToByteArray(param_company);
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if (license == LicenseTypes.LicenseMacKeyboard && (byte)(byteArray[index] + 0xbf) < 0x1a)
+                if (license == LicenseTypes.LicenseMacKeyboard && (byte) (byteArray[index] + 0xbf) < 0x1a)
                 {
                     byteArray[index] += 32;
                 }
@@ -162,20 +170,55 @@ namespace FrappeMocha
 
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if ((int)byteArray[index] >= 0x41) // 'A'
-                    num1 += (uint)byteArray[index] + (uint)license;
+                if ((int) byteArray[index] >= 0x41) // 'A'
+                    num1 += (uint) byteArray[index] + (uint) license;
             }
 
-            uint num2 = (uint)(num1 * (int)param_lickey[0]);
-            num2 = (uint)(num2 * (num2 & byte.MaxValue) & ushort.MaxValue);
+            uint num2 = (uint) (num1 * (int) param_lickey[0]);
+            num2 = (uint) (num2 * (num2 & byte.MaxValue) & ushort.MaxValue);
             ulong num3 = 0xaa8;
             if (99 < num2)
             {
-                num3 = (ulong)num2;
+                num3 = (ulong) num2;
             }
 
             param_lickey = param_lickey[0].ToString() + (object) num3;
 
+
+            return param_lickey;
+        }
+
+        /**
+         * This one was fun as well
+         * Found out that the license must end with "45" in order to validate
+         */
+        public string GenLicenseJavascript(int itype, string param_company, LicenseTypes license)
+        {
+            char type = (char) (itype + (int) '0');
+            string param_lickey = type.ToString();
+            ulong sum = 0;
+            byte[] byteArray = this.StrToByteArray(param_company);
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((ulong) byteArray[index] >= 65 && (ulong) byteArray[index] <= 90)
+                    byteArray[index] += 32; // this is basically str.toLower()
+            }
+
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((ulong) byteArray[index] >= 65 && (ulong) byteArray[index] <= 122)
+                {
+                    sum += byteArray[index] + (uint) license;
+                }
+            }
+            sum = sum * param_lickey[0];
+            sum = sum * (sum & byte.MaxValue) & ushort.MaxValue;
+            if (sum < 100U)
+                sum = 2728U;
+
+            param_lickey = (param_lickey[0].ToString() + (object) sum) + '-' +
+                           (Int32) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
+                           + "45"; // a little salt, as a treat
 
             return param_lickey;
         }
@@ -185,10 +228,10 @@ namespace FrappeMocha
         {
             switch (license)
             {
-                case LicenseTypes.License3270:
-                case LicenseTypes.License3812:
-                case LicenseTypes.License5250:
-                case LicenseTypes.LicenseTelnet:
+                case LicenseTypes.LicenseWindows3270:
+                case LicenseTypes.LicenseWindows3812:
+                case LicenseTypes.LicenseWindows5250:
+                case LicenseTypes.LicenseWindowsTelnet:
                     return CheckLicenseWindows(param_lickey, param_company, license);
 
                 case LicenseTypes.LicenseJavaTelnet:
@@ -202,9 +245,48 @@ namespace FrappeMocha
                 case LicenseTypes.LicenseMacTelnet:
                 case LicenseTypes.LicenseMacKeyboard:
                     return CheckLicenseMac(param_lickey, param_company, license);
+
+                case LicenseTypes.LicenseChrome3270:
+                case LicenseTypes.LicenseChrome5250:
+                case LicenseTypes.LicenseChromeTelnet:
+                    return CheckLicenseJavaScript(param_lickey, param_company, license);
             }
             return false;
         }
+
+        /**
+         * All Javascript licenses need to end with "45" in order to validate
+         */
+        public bool CheckLicenseJavaScript(string param_lickey, string param_company, LicenseTypes license)
+        {
+            ulong sum = 0;
+            byte[] byteArray = this.StrToByteArray(param_company);
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((ulong) byteArray[index] >= 65 && (ulong) byteArray[index] <= 90)
+                    byteArray[index] += 32; // this is basically str.toLower()
+            }
+
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((ulong) byteArray[index] >= 65 && (ulong) byteArray[index] <= 122)
+                {
+                    sum += byteArray[index] + (uint) license;
+                }
+            }
+            sum = sum * param_lickey[0];
+            sum = sum * (sum & byte.MaxValue) & ushort.MaxValue;
+            if (sum < 100U)
+                sum = 2728U;
+
+            if (!param_lickey.StartsWith(param_lickey[0].ToString() + (object) sum) || !param_lickey.EndsWith("45"))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
 
         /**
          * @todo: write some sanity checks
@@ -213,6 +295,7 @@ namespace FrappeMocha
         {
             return true;
         }
+
 
         /**
          * @todo: write some sanity checks
@@ -233,20 +316,20 @@ namespace FrappeMocha
             for (int index = 0; index < byteArray.Length; ++index)
             {
                 // >= 'A' && <= 'Z'
-                if ((int)byteArray[index] >= 65 && (int)byteArray[index] <= 90)
-                    byteArray[index] += (byte)32;
+                if ((int) byteArray[index] >= 65 && (int) byteArray[index] <= 90)
+                    byteArray[index] += (byte) 32;
             }
             for (int index = 0; index < byteArray.Length; ++index)
             {
-                if ((int)byteArray[index] >= 65) // 'A'
-                    num1 += (uint)byteArray[index] + (uint)license;
+                if ((int) byteArray[index] >= 65) // 'A'
+                    num1 += (uint) byteArray[index] + (uint) license;
             }
-            uint num2 = num1 * (uint)param_lickey[0];
-            uint num3 = (uint)((int)num2 * ((int)num2 & (int)byte.MaxValue) & (int)ushort.MaxValue);
+            uint num2 = num1 * (uint) param_lickey[0];
+            uint num3 = (uint) ((int) num2 * ((int) num2 & (int) byte.MaxValue) & (int) ushort.MaxValue);
             if (num3 < 100U)
                 num3 = 2728U;
 
-            if (param_lickey.StartsWith((param_lickey[0].ToString() ?? "") + (object)num3))
+            if (param_lickey.StartsWith((param_lickey[0].ToString() ?? "") + (object) num3))
             {
                 //this.aa = param_lickey.Substring(0, 1);
                 return true;
@@ -269,7 +352,7 @@ namespace FrappeMocha
                 }
                 catch (Exception ex2)
                 {
-                    return new byte[1] { (byte)63 };
+                    return new byte[1] {(byte) 63};
                 }
             }
         }
@@ -292,6 +375,5 @@ namespace FrappeMocha
                 }
             }
         }
-
     }
 }
