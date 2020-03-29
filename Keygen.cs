@@ -24,6 +24,11 @@ namespace FrappeMocha
             LicenseChrome3270 = 0xb3,
             LicenseChrome5250 = 0xb2,
             LicenseChromeTelnet = 0xb4,
+            LicenseAndroid3270 = 0x94,
+            LicenseAndroid5250 = 0x91,
+            LicenseAndroidTelnet = 0x96,
+            LicenseAndroidVnc = 0x92,
+            LicenseAndroidBarcode = 0x9c,
         }
 
         public Keygen()
@@ -60,6 +65,13 @@ namespace FrappeMocha
                 case LicenseTypes.LicenseChrome5250:
                 case LicenseTypes.LicenseChromeTelnet:
                     return GenLicenseJavascript(type, param_company, license);
+
+                case LicenseTypes.LicenseAndroid3270:
+                case LicenseTypes.LicenseAndroid5250:
+                case LicenseTypes.LicenseAndroidTelnet:
+                case LicenseTypes.LicenseAndroidVnc:
+                case LicenseTypes.LicenseAndroidBarcode:
+                    return GenLicenseAndroid(type, param_company, license);
             }
             return "";
         }
@@ -224,6 +236,37 @@ namespace FrappeMocha
         }
 
 
+        public string GenLicenseAndroid(int itype, string param_company, LicenseTypes license)
+        {
+            char type = (char)(itype + (int)'0');
+            string param_lickey = type.ToString();
+            long sum = 0;
+            byte[] byteArray = this.StrToByteArray(param_company);
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((long)byteArray[index] >= 65 && (long)byteArray[index] <= 90)
+                    byteArray[index] += 32; // this is basically str.toLower()
+            }
+
+            for (int index = 0; index < byteArray.Length; ++index)
+            {
+                if ((ulong)byteArray[index] >= 65 && (ulong)byteArray[index] <= 122)
+                {
+                    sum += byteArray[index] + (uint)license;
+                }
+            }
+            sum = sum * param_lickey[0];
+            sum = sum * (sum & byte.MaxValue) & ushort.MaxValue;
+            if (sum < 100U)
+                sum = 2728U;
+
+            param_lickey = (param_lickey[0].ToString() + (object) sum) + '-' +
+                           (Int32) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+            return param_lickey;
+        }
+
+
         public bool CheckLicense(string param_lickey, string param_company, LicenseTypes license)
         {
             switch (license)
@@ -250,7 +293,64 @@ namespace FrappeMocha
                 case LicenseTypes.LicenseChrome5250:
                 case LicenseTypes.LicenseChromeTelnet:
                     return CheckLicenseJavaScript(param_lickey, param_company, license);
+
+                case LicenseTypes.LicenseAndroid3270:
+                case LicenseTypes.LicenseAndroid5250:
+                case LicenseTypes.LicenseAndroidTelnet:
+                case LicenseTypes.LicenseAndroidVnc:
+                case LicenseTypes.LicenseAndroidBarcode:
+                    return CheckLicenseAndroid(param_lickey, param_company, license);
             }
+            return false;
+        }
+
+        /**
+         * @todo: write some sanity checks
+         */
+        public bool CheckLicenseAndroid(string param_lickey, string param_company, LicenseTypes license)
+        {
+            byte[] bArr = new byte[255];
+            byte[] bArr2 = new byte[255];
+            if (param_company.Length < 2 || param_lickey.Length < 2)
+            {
+                return false;
+            }
+            for (int i = 0; i < param_lickey.Length; i++)
+            {
+                bArr2[i] = (byte)param_lickey[i];
+            }
+            for (int i2 = 0; i2 < param_company.Length; i2++)
+            {
+                bArr[i2] = (byte)param_company[i2];
+                if (param_company[i2] >= 'A' && param_company[i2] <= 'Z')
+                {
+                    bArr[i2] = (byte)(bArr[i2] + 32);
+                }
+            }
+            long j = 0;
+            for (int i3 = 0; i3 < param_company.Length; i3++)
+            {
+                if (bArr[i3] >= 65 && bArr[i3] <= 122)
+                {
+                    j += (bArr[i3] + (long)license);
+                }
+            }
+            long j2 = j * bArr2[0];
+            long j3 = (j2 * (j2 & 255)) & 65535;
+            if (j3 < 100)
+            {
+                j3 = 2728;
+            }
+            string sb = "";
+            sb += param_lickey[0];
+            sb += (object)j3;
+            if (param_lickey.StartsWith(sb))
+            {
+                // lictype = bArr2[0] - 48;
+                // is_lite2 = false;
+                return true;
+            }
+            // lictype = -1;
             return false;
         }
 

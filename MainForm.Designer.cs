@@ -136,7 +136,12 @@
             "Keyboard for Mac OS X",
             "TN3270 for Google Chrome",
             "TN5250 for Google Chrome",
-            "Telnet for Google Chrome"});
+            "Telnet for Google Chrome",
+            "TN3270 for Android",
+            "TN5250 for Android",
+            "Telnet for Android",
+            "VNC for Android",
+            "Barcode for Android"});
             this.productSelect.Location = new System.Drawing.Point(12, 25);
             this.productSelect.Name = "productSelect";
             this.productSelect.Size = new System.Drawing.Size(146, 21);

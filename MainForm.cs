@@ -121,6 +121,27 @@ namespace FrappeMocha
                 case 14:
                     this.keygen(Keygen.LicenseTypes.LicenseChromeTelnet);
                     break;
+
+                case 15:
+                    this.keygen(Keygen.LicenseTypes.LicenseAndroid3270);
+                    break;
+
+                case 16:
+                    this.keygen(Keygen.LicenseTypes.LicenseAndroid5250);
+                    break;
+
+                case 17:
+                    this.keygen(Keygen.LicenseTypes.LicenseAndroidTelnet);
+                    break;
+
+                case 18:
+                    this.keygen(Keygen.LicenseTypes.LicenseAndroidVnc);
+                    break;
+
+                case 19:
+                    this.keygen(Keygen.LicenseTypes.LicenseAndroidBarcode);
+                    break;
+
             }
         }
 
