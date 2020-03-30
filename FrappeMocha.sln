@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.1022
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrappeMocha", "FrappeMocha.csproj", "{04AB5523-E679-4628-8B8B-B928A5DA5107}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{EB446B1A-E322-48E8-968A-3E4C9B02454F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{04AB5523-E679-4628-8B8B-B928A5DA5107}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04AB5523-E679-4628-8B8B-B928A5DA5107}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04AB5523-E679-4628-8B8B-B928A5DA5107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB446B1A-E322-48E8-968A-3E4C9B02454F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB446B1A-E322-48E8-968A-3E4C9B02454F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB446B1A-E322-48E8-968A-3E4C9B02454F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB446B1A-E322-48E8-968A-3E4C9B02454F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

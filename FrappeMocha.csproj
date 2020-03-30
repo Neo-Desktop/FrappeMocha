@@ -47,17 +47,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Keygen.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="Keygen\KeygenBase.cs" />
+    <Compile Include="Keygen\KeygenProduct.cs" />
+    <Compile Include="Keygen\LicenseTypes.cs" />
+    <Compile Include="Keygen\Platforms\PlatformAndroid.cs" />
+    <Compile Include="Keygen\Platforms\PlatformJava.cs" />
+    <Compile Include="Keygen\Platforms\PlatformJavaScript.cs" />
+    <Compile Include="Keygen\Platforms\PlatformMac.cs" />
+    <Compile Include="Keygen\Platforms\PlatformWindows.cs" />
+    <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
